@@ -1,13 +1,15 @@
 import React from "react";
 import { Box, Container, Flex, Image, VStack } from "@chakra-ui/react";
 import AuthForm from "../../components/AuthForm/AuthForm";
+import ReactCarousel from "../../components/ReactCarousel/ReactCarousel";
 const AuthPage = () => {
   return (
     <Flex minH={"100vh"} justifyContent={"center"} alignItems={"center"}>
       <Container maxW={"container.md"} padding={0}>
         <Flex justifyContent={'center'} alignItems={'center'} gap={10}>
-        <Box display={{ base: "none", md: "block" }}>
-          <Image src="/auth.png" h={650} alt="phone-image" />
+        <Box display={{ base: "none", md: "block" }} position={'relative'}>
+          <Image src="/img8.png" h={638} alt="phone-image" />
+         <ReactCarousel/>
         </Box>
         <VStack spacing={4} align={"stretch"}>
           <AuthForm/>

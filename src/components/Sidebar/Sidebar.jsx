@@ -38,7 +38,7 @@ const Sidebar = () => {
         />
       ),
       text: "Profile",
-      link: "/",
+      link: "/username",
     },
   ];
   return (
