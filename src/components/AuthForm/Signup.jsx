@@ -1,7 +1,14 @@
-import { Button, Input, InputGroup, InputRightElement } from "@chakra-ui/react";
+import {
+  Alert,
+  AlertIcon,
+  Button,
+  Input,
+  InputGroup,
+  InputRightElement,
+} from "@chakra-ui/react";
 import React, { useState } from "react";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
-import { useSignInWithEmailAndPassword } from "react-firebase-hooks/auth";
+import useSignUpWithEmailAndPassword from "../../hooks/useSignUpWithEmailAndPassword";
 const Signup = () => {
   const [input, setInput] = useState({
     fullName: "",
@@ -10,7 +17,7 @@ const Signup = () => {
     password: "",
   });
   const [showPassword, setShowPassword] = useState(false);
-  const { signup ,loading, error } = useSignInWithEmailAndPassword();
+  const { loading, error, signup } = useSignUpWithEmailAndPassword();
   return (
     <>
       <Input
@@ -56,7 +63,20 @@ const Signup = () => {
           </Button>
         </InputRightElement>
       </InputGroup>
-      <Button w={"full"} colorScheme="blue" size={"sm"} fontSize={14} onClick={()=>signup()}>
+      {error && (
+        <Alert status="error" fontSize={13} p={2} borderRadius={4}>
+          <AlertIcon fontSize={12} />
+          {error.message}
+        </Alert>
+      )}
+      <Button
+        w={"full"}
+        colorScheme="blue"
+        size={"sm"}
+        fontSize={14}
+        isLoading={loading}
+        onClick={() => signup(input)}
+      >
         Sign up
       </Button>
     </>

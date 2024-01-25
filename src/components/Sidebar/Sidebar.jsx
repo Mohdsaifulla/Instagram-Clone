@@ -113,10 +113,8 @@ const Sidebar = () => {
               openDelay={500}
               display={{ base: "block", md: "none" }}
             >
-              <Link
-                display={"flex"}
-                to={'/auth'}
-                as={RouterLink}
+              <Flex
+             onClick={handleLogout}
                 gap={4}
                 p={2}
                 alignItems={"center"}
@@ -129,7 +127,7 @@ const Sidebar = () => {
               >
                <FaSignOutAlt size={25}/>
                 <Box display={{ base: "none", md: "block" }}>Logout</Box>
-              </Link>
+              </Flex>
             </Tooltip>
 
       </Flex>
