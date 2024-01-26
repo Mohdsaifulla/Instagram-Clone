@@ -1,4 +1,4 @@
-import { Avatar, Box, Flex, Link, Tooltip } from "@chakra-ui/react";
+import { Avatar, Box, Button, Flex, Link, Tooltip } from "@chakra-ui/react";
 import React from "react";
 import { Link as RouterLink } from "react-router-dom";
 import { AiFillHome } from "react-icons/ai";
@@ -10,6 +10,7 @@ import {
   SearchLogo,
 } from "../../assets/constants";
 import { FaSignOutAlt } from "react-icons/fa";
+import useLogout from "../../hooks/useLogout";
 const Sidebar = () => {
   const sidebarItems = [
     {
@@ -41,6 +42,7 @@ const Sidebar = () => {
       link: "/username",
     },
   ];
+  const {handleLogout,isLogginOut,error}=useLogout()
   return (
     <Box
       h={"100vh"}
@@ -126,7 +128,11 @@ const Sidebar = () => {
                 mt={'auto'}
               >
                <FaSignOutAlt size={25}/>
-                <Box display={{ base: "none", md: "block" }}>Logout</Box>
+                <Button display={{ base: "none", md: "block" }} 
+                variant={'ghost'}
+                _hover={{bg:'transparent'}}
+                isLoading={isLogginOut}
+                >Logout</Button>
               </Flex>
             </Tooltip>
 
