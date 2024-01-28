@@ -26,6 +26,6 @@ const PageLayout = ({ children }) => {
       </Box>
     </Flex>
   );
-};
+}; 
 
 export default PageLayout;
