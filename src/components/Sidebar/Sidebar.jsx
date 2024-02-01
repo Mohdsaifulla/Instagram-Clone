@@ -11,38 +11,41 @@ import {
 } from "../../assets/constants";
 import { FaSignOutAlt } from "react-icons/fa";
 import useLogout from "../../hooks/useLogout";
+import SidebarItems from "./SidebarItems";
+
+
 const Sidebar = () => {
-  const sidebarItems = [
-    {
-      icon: <AiFillHome size={25} />,
-      text: "Home",
-      link: "/",
-    },
-    {
-      icon: <SearchLogo />,
-      text: "Search",
-    },
-    {
-      icon: <NotificationsLogo />,
-      text: "Notifications",
-    },
-    {
-      icon: <CreatePostLogo />,
-      text: "Create",
-    },
-    {
-      icon: (
-        <Avatar
-          name="Dan Abrahmov"
-          src="https://bit.ly/dan-abramov"
-          size={"sm"}
-        />
-      ),
-      text: "Profile",
-      link: "/username",
-    },
-  ];
-  const {handleLogout,isLogginOut,error}=useLogout()
+  // const sidebarItems = [
+  //   {
+  //     icon: <AiFillHome size={25} />,
+  //     text: "Home",
+  //     link: "/",
+  //   },
+  //   {
+  //     icon: <SearchLogo />,
+  //     text: "Search",
+  //   },
+  //   {
+  //     icon: <NotificationsLogo />,
+  //     text: "Notifications",
+  //   },
+  //   {
+  //     icon: <CreatePostLogo />,
+  //     text: "Create",
+  //   },
+  //   {
+  //     icon: (
+  //       <Avatar
+  //         name="Dan Abrahmov"
+  //         src="https://bit.ly/dan-abramov"
+  //         size={"sm"}
+  //       />
+  //     ),
+  //     text: "Profile",
+  //     link: "/mosaif375",
+  //   },
+  // ];
+  const { handleLogout, isLogginOut, error } = useLogout();
   return (
     <Box
       h={"100vh"}
@@ -75,7 +78,12 @@ const Sidebar = () => {
         >
           <InstagramMobileLogo />
         </Link>
+
         <Flex direction={"column"} gap={5} cursor={"pointer"}>
+					<SidebarItems />
+				</Flex>
+
+        {/* <Flex direction={"column"} gap={5} cursor={"pointer"}>
           {sidebarItems.map((item, index) => (
             <Tooltip
               key={index}
@@ -104,38 +112,39 @@ const Sidebar = () => {
               </Link>
             </Tooltip>
           ))}
-        </Flex>
+        </Flex> */}
 
         <Tooltip
-              
-              hasArrow
-              label={"Logout"}
-              placement="right"
-              ml={1}
-              openDelay={500}
-              display={{ base: "block", md: "none" }}
+          hasArrow
+          label={"Logout"}
+          placement="right"
+          ml={1}
+          openDelay={500}
+          display={{ base: "block", md: "none" }}
+        >
+          <Flex
+            onClick={handleLogout}
+            gap={4}
+            p={2}
+            alignItems={"center"}
+            borderRadius={6}
+            _hover={{ bg: "whiteAlpha.400" }}
+            w={{ base: "10", md: "full" }}
+            cursor={"pointer"}
+            justifyContent={{ base: "center", md: "flex-start" }}
+            mt={"auto"}
+          >
+            <FaSignOutAlt size={25} />
+            <Button
+              display={{ base: "none", md: "block" }}
+              variant={"ghost"}
+              _hover={{ bg: "transparent" }}
+              isLoading={isLogginOut}
             >
-              <Flex
-             onClick={handleLogout}
-                gap={4}
-                p={2}
-                alignItems={"center"}
-                borderRadius={6}
-                _hover={{ bg: "whiteAlpha.400" }}
-                w={{ base: "10", md: "full" }}
-                cursor={"pointer"}
-                justifyContent={{ base: "center", md: "flex-start" }}
-                mt={'auto'}
-              >
-               <FaSignOutAlt size={25}/>
-                <Button display={{ base: "none", md: "block" }} 
-                variant={'ghost'}
-                _hover={{bg:'transparent'}}
-                isLoading={isLogginOut}
-                >Logout</Button>
-              </Flex>
-            </Tooltip>
-
+              Logout
+            </Button>
+          </Flex>
+        </Tooltip>
       </Flex>
     </Box>
   );
