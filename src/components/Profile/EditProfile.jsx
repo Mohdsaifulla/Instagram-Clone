@@ -15,19 +15,22 @@ import {
   ModalOverlay,
   Stack,
 } from "@chakra-ui/react";
-import { useState } from "react";
-import useAuthStore from "../../store/authStore"
+import { useRef, useState } from "react";
+import useAuthStore from "../../store/authStore";
+import usePreviewImag from "../../hooks/usePreviewImag";
 const EditProfile = ({ isOpen, onClose }) => {
   const [input, setInput] = useState({
     fullName: "",
     username: "",
     bio: "",
   });
-  const authUser=useAuthStore(state=>state.user)
-const handleEditProfile=()=>{
-  console.log(input)
-}
-
+  const fileRef = useRef(null);
+  const authUser = useAuthStore((state) => state.user);
+  const handleEditProfile = () => {
+    console.log(input);
+  };
+  const { handleImageChange, selectedFile, setSelectedFile } = usePreviewImag();
+  console.log(selectedFile);
   return (
     <>
       <Modal isOpen={isOpen} onClose={onClose}>
@@ -57,11 +60,23 @@ const handleEditProfile=()=>{
                 <FormControl>
                   <Stack direction={["column", "row"]} spacing={6}>
                     <Center>
-                      <Avatar size="xl" src={""} border={"2px solid white "} />
+                      <Avatar
+                        size="xl"
+                        src={selectedFile || authUser.profilePicURL}
+                        border={"2px solid white "}
+                      />
                     </Center>
                     <Center w="full">
-                      <Button w="full">Edit Profile Picture</Button>
+                      <Button w="full" onClick={() => fileRef.current.click()}>
+                        Edit Profile Picture
+                      </Button>
                     </Center>
+                    <Input
+                      type="file"
+                      hidden
+                      ref={fileRef}
+                      onChange={handleImageChange}
+                    />
                   </Stack>
                 </FormControl>
 
@@ -71,7 +86,7 @@ const handleEditProfile=()=>{
                     placeholder={"Full Name"}
                     size={"sm"}
                     type={"text"}
-                    value={input.fullName||authUser.fullName}
+                    value={input.fullName || authUser.fullName}
                     onChange={(e) =>
                       setInput({ ...input, fullName: e.target.value })
                     }
@@ -84,7 +99,7 @@ const handleEditProfile=()=>{
                     placeholder={"Username"}
                     size={"sm"}
                     type={"text"}
-                    value={input.username||authUser.username}
+                    value={input.username || authUser.username}
                     onChange={(e) =>
                       setInput({ ...input, username: e.target.value })
                     }
@@ -97,7 +112,7 @@ const handleEditProfile=()=>{
                     placeholder={"Bio"}
                     size={"sm"}
                     type={"text"}
-                    value={input.bio|| authUser.bio}
+                    value={input.bio || authUser.bio}
                     onChange={(e) =>
                       setInput({ ...input, bio: e.target.value })
                     }
