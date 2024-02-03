@@ -18,19 +18,30 @@ import {
 import { useRef, useState } from "react";
 import useAuthStore from "../../store/authStore";
 import usePreviewImag from "../../hooks/usePreviewImag";
+import useEditProfile from "../../hooks/useEditProfile";
+import useShowToast from "../../hooks/useShowToast";
 const EditProfile = ({ isOpen, onClose }) => {
   const [input, setInput] = useState({
     fullName: "",
     username: "",
     bio: "",
   });
+  const showToast=useShowToast()
   const fileRef = useRef(null);
   const authUser = useAuthStore((state) => state.user);
-  const handleEditProfile = () => {
-    console.log(input);
-  };
   const { handleImageChange, selectedFile, setSelectedFile } = usePreviewImag();
-  console.log(selectedFile);
+  // console.log(selectedFile);
+  const {isUpdating,editProfile}=useEditProfile()
+  const handleEditProfile = async() => {
+    try{
+      await editProfile(input,selectedFile)
+      setSelectedFile(null)
+      onClose();
+    }catch(error){
+      showToast("Error",error.message,"error")
+    }
+  };
+
   return (
     <>
       <Modal isOpen={isOpen} onClose={onClose}>
@@ -137,6 +148,7 @@ const EditProfile = ({ isOpen, onClose }) => {
                     w="full"
                     _hover={{ bg: "blue.500" }}
                     onClick={handleEditProfile}
+                    isLoading={isUpdating}
                   >
                     Submit
                   </Button>
