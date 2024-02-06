@@ -1,30 +1,66 @@
 import {
-  Avatar,
-  Box,
-  Divider,
-  Flex,
-  GridItem,
-  Image,
-  Text,
-  VStack,
-  useDisclosure,
+	Avatar,
+	Button,
+	Divider,
+	Flex,
+	GridItem,
+	Image,
+	Modal,
+	ModalBody,
+	ModalCloseButton,
+	ModalContent,
+	ModalOverlay,
+	Text,
+	VStack,
+	useDisclosure,
 } from "@chakra-ui/react";
-import React from "react";
 import { AiFillHeart } from "react-icons/ai";
 import { FaComment } from "react-icons/fa";
-import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalCloseButton,
-} from "@chakra-ui/react";
 import { MdDelete } from "react-icons/md";
 import Comment from "../Comment/Comment";
 import PostFooter from "../FeedPosts/PostFooter";
-const ProfilePost = ({ img }) => {
+import useUserProfileStore from "../../store/userProfileStore";
+import useAuthStore from "../../store/authStore";
+import useShowToast from "../../hooks/useShowToast";
+import { useState } from "react";
+import { deleteObject, ref } from "firebase/storage";
+import { firestore, storage } from "../../firebase/firebase";
+import { arrayRemove, deleteDoc, doc, updateDoc } from "firebase/firestore";
+import usePostStore from "../../store/postStore";
+ 
+const ProfilePost = ({ post }) => {
+  const showToast = useShowToast();
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const userProfile = useUserProfileStore((state) => state.userProfile);
+  const authUser = useAuthStore((state) => state.user);
+
+  const [isDeleting, setIsDeleting] = useState(false);
+  const deletePost = usePostStore((state) => state.deletePost);
+  const decrementPostsCount = useUserProfileStore((state) => state.deletePost);
+
+  const handleDeletePost = async () => {
+    if (!window.confirm("Are you sure you want to delete this post?")) return;
+    if (isDeleting) return;
+
+    try {
+      const imageRef = ref(storage, `posts/${post.id}`);
+      await deleteObject(imageRef);
+      const userRef = doc(firestore, "users", authUser.uid);
+      await deleteDoc(doc(firestore, "posts", post.id));
+
+      await updateDoc(userRef, {
+        posts: arrayRemove(post.id),
+      });
+
+      deletePost(post.id);
+      decrementPostsCount(post.id);
+      showToast("Success", "Post deleted successfully", "success");
+    } catch (error) {
+      showToast("Error", error.message, "error");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
   return (
     <>
       <GridItem
@@ -55,19 +91,19 @@ const ProfilePost = ({ img }) => {
             <Flex>
               <AiFillHeart />
               <Text fontWeight={"bold"} ml={2}>
-                7
+                {post.likes.length}
               </Text>
             </Flex>
             <Flex>
               <FaComment size={20} />
               <Text fontWeight={"bold"} ml={2}>
-                7
+                {post.comments.length}
               </Text>
             </Flex>
           </Flex>
         </Flex>
         <Image
-          src={img}
+          src={post.imageURL}
           alt="profile-picture"
           objectFit={"cover"}
           w={"100%"}
@@ -90,16 +126,20 @@ const ProfilePost = ({ img }) => {
               gap={4}
               w={{ base: "50%", sm: "70%", md: "full" }}
               mx={"auto"}
+              maxH={"90vh"}
+              minH={"50vh"}
             >
-              <Box
+              <Flex
                 borderRadius={4}
                 overflow={"hidden"}
                 border={"1px solid"}
                 borderColor={"whiteAplha.300"}
                 flex={1.5}
+                justifyContent={"center"}
+                alignItems={"center"}
               >
-                <Image src={img} alt="profile post" />
-              </Box>
+                <Image src={post.imageURL} alt="profile post" />
+              </Flex>
               <Flex
                 flex={1}
                 flexDir={"column"}
@@ -109,21 +149,27 @@ const ProfilePost = ({ img }) => {
                 <Flex alignItems={"center"} justifyContent={"space-between"}>
                   <Flex alignItems={"center"} gap={4}>
                     <Avatar
-                      src="https://bit.ly/dan-abramov"
+                      src={userProfile.profilePicURL}
                       size={"sm"}
                       name="Francisco"
                     />
                     <Text fontWeight={"bold"} fontSize={12}>
-                      @francis
+                      {userProfile.username}
                     </Text>
                   </Flex>
-                  <Box
-                    _hover={{ bg: "whiteAlpha.300", color: "red.600" }}
-                    borderRadius={4}
-                    p={1}
-                  >
-                    <MdDelete size={20} cursor={"pointer"} />
-                  </Box>
+                  {authUser?.uid === userProfile.uid && (
+                    <Button
+                      size={"sm"}
+                      bg={"transparent"}
+                      _hover={{ bg: "whiteAlpha.300", color: "red.600" }}
+                      borderRadius={4}
+                      p={1}
+                      onClick={handleDeletePost}
+                      isLoading={isDeleting}
+                    >
+                      <MdDelete size={20} cursor="pointer" />
+                    </Button>
+                  )}
                 </Flex>
                 <Divider my={4} bg={"gray.500"} />
                 <VStack
@@ -151,14 +197,14 @@ const ProfilePost = ({ img }) => {
                     text="very nice"
                   />
                 </VStack>
-                <Divider my={4} bg={'gray.800'}/>
-                <PostFooter isProfilePage={true}/>
+                <Divider my={4} bg={"gray.800"} />
+                <PostFooter isProfilePage={true} />
               </Flex>
             </Flex>
           </ModalBody>
-        </ModalContent> 
+        </ModalContent>
       </Modal>
-    </> 
+    </>
   );
 };
 
