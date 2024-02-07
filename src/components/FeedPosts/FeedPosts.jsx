@@ -4,20 +4,16 @@ import {
   Flex,
   Skeleton,
   SkeletonCircle,
+  Text,
   VStack,
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import FeedPost from "./FeedPost";
+import useGetFeedPosts from "../../hooks/useGetFeedPosts";
 
 const FeedPosts = () => {
-  const [isLoading, setLoading] = useState(true);
-
-  useEffect(() => {
-    setTimeout(() => {
-      setLoading(false);
-    }, 2000);
-  }, []);
-
+ 
+  const { isLoading, posts } = useGetFeedPosts();
   return (
     <Container maxW={"container.sm"} py={10} px={2}>
       {isLoading &&
@@ -31,15 +27,20 @@ const FeedPosts = () => {
               </VStack>
             </Flex>
             <Skeleton w={"full"}>
-              <Box h={'500px'}>contents wrapped</Box>
+              <Box h={'400px'}>contents wrapped</Box>
             </Skeleton>
           </VStack>
         ))}
 
-      <FeedPost img="/img5.jpg" username="@rosy" avatar="/img5.jpg" />
-      <FeedPost img="/img6.jpg" username="@josh" avatar="/img6.jpg" />
-      <FeedPost img="/img7.jpg" username="@inoski" avatar="/img7.jpg" />
-      <FeedPost img="/img8.jpg" username="@fracsis" avatar="/img8.jpg" />
+{!isLoading && posts.length > 0 && posts.map((post) => <FeedPost key={post.id} post={post} />)}
+{!isLoading && posts.length === 0 && (
+				<>
+					<Text fontSize={"md"} color={"red.400"}>
+						Dayum. Looks like you don&apos;t have any friends.
+					</Text>
+					<Text color={"red.400"}>Stop coding and go make some!!</Text>
+				</>
+			)}
     </Container>
   );
 };

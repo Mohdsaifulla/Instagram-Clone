@@ -27,6 +27,7 @@ import { deleteObject, ref } from "firebase/storage";
 import { firestore, storage } from "../../firebase/firebase";
 import { arrayRemove, deleteDoc, doc, updateDoc } from "firebase/firestore";
 import usePostStore from "../../store/postStore";
+import Caption from "../Comment/Caption";
  
 const ProfilePost = ({ post }) => {
   const showToast = useShowToast();
@@ -178,27 +179,14 @@ const ProfilePost = ({ post }) => {
                   maxH={"350px"}
                   overflowY={"auto"}
                 >
-                  <Comment
-                    createdAt="1d ago"
-                    username="@francis"
-                    profilePic="https://bit.ly/dan-abramov"
-                    text="fireeee"
-                  />
-                  <Comment
-                    createdAt="1d ago"
-                    username="@francis"
-                    profilePic="https://bit.ly/dan-abramov"
-                    text="cool"
-                  />
-                  <Comment
-                    createdAt="1d ago"
-                    username="@francis"
-                    profilePic="https://bit.ly/dan-abramov"
-                    text="very nice"
-                  />
+                  {post.caption&&<Caption post={post}/>}
+                {post.comments.map((comment)=>(
+                  <Comment key={comment.id} comment={comment}/>
+                ))}
+                 
                 </VStack>
                 <Divider my={4} bg={"gray.800"} />
-                <PostFooter isProfilePage={true} />
+                <PostFooter isProfilePage={true} post={post}/>
               </Flex>
             </Flex>
           </ModalBody>
